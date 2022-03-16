@@ -1,0 +1,558 @@
+ #include"iostream"
+ #include"string"
+ using namespace std;
+ int data[6][7];
+ int rowNum = 6;
+ int colNum = 7;
+ class game{
+    public: 
+    enum Who {};
+ };
+class Connect: public game
+ {
+     Who win_check(Who last_mover)
+};
+ bool computer_move(int check){
+	 //rowNum = 6; colNum = 7;
+    for (int i = 0; i < rowNum; i++)
+    {
+        for (int j = 0; j < colNum; i++)
+        {
+            if (data[i][j]==check)
+            {
+                int ti = i, tj = j;
+
+                int cnt = 0;
+                
+                //check vertically
+                //上下方向
+                while(ti >= 0 && data[ti][j]==check) {ti--; cnt++;}//往下遍历;
+                ti = i+1;
+                while(ti < rowNum && data[ti][j] == check) {ti++; cnt++;}
+                if (cnt == 3 && ti < rowNum && data[i][ti] == 0) { cmove.col = j; make_move(cmove); return true;}
+                //找到上下方向上有三个棋的地方,去下在这里;
+                
+				//check diagnally 1
+				//y=x 这个方向;
+                cnt = 0;
+                ti = i; tj= j;
+                while (ti >= 0 && tj >= 0 && data[ti][tj] == check) {ti--;tj--;cnt++;}
+                int bl_i = ti, bl_j = tj; 
+                ti = i+1; tj = j+1;
+                while (ti < rowNum && tj < colNum && data[ti][tj] == check) {ti++; tj++; cnt++; }
+                int tr_i = ti, tr_j = tj;
+                if (cnt == 3) {
+                    if (bl_i >= 0 && bl_j >= 0 && data[bl_i][bl_j] == 0//这个地方可以下的种种条件; 
+						&& (bl_i == 0 || //是第一行  
+						(bl_i-1 >= 0 && data[bl_i-1][bl_j] != 0)//这一行的下面已经有棋了,重力棋需要判断这个;
+						)) {cmove.col = bl_j; make_move(cmove); return true;}
+					//这个if语句同理,y=x 这条线的二头都要考虑下的情况;
+                    if (tr_i < rowNum && tr_j < colNum && data[tr_i][tr_j] == 0 && tr_i-1 > 0 && data[tr_i-1][tr_j] != 0) {cmove.col = tr_j; make_move(cmove); return true;}
+                }
+                if (cnt == 2)
+                {
+                    if(bl_i-1 >= 0 && bl_j-1 >= 0//可以下,没越界 
+						&& data[bl_i][bl_j] == 0 
+						&& data[bl_i-1][bl_j] != 0//下面有棋 
+						&& data [bl_i-1][bl_j-1] == check)// 
+					{cmove.col = bl_j; make_move(cmove); return true;}
+                    if(tr_i+1 < rowNum && tr_j+1 < colNum && data[tr_i][tr_j] == 0 && data[tr_i-1][tr_j] != 0 && data[tr_i+1][tr_j+1] == check) {cmove.col = tr_j; make_move(cmove); return true;}
+                }
+                //check diagnally 2
+				//y = -x 这条线
+                cnt = 0;
+                ti = i; tj = j;
+                while(data[ti][tj] == check && ti >= 0 && tj < colNum) {ti--;tj++;cnt++;}
+                int br_i = ti, br_j = tj; 
+
+                ti = i+1; tj = j-1;
+                while(data[ti][tj] == check && ti < rowNum && tj >= 0 ) {ti++; tj--; cnt++; }
+                int tl_i = ti, tl_j = tj;
+
+                if (cnt == 3) {
+                    if (br_i-1 >= 0 && br_j < colNum && data[br_i][br_j] == 0 && data[br_i-1][br_j] != 0) { cmove.col = br_j; make_move(cmove); return true;}
+                    if (tl_i < rowNum && tl_j >= 0 && data[tl_i][tl_j] == 0 && data[tl_i-1][tl_j] != 0) { cmove.col = tl_j; make_move(cmove); return true;}
+                }
+                if (cnt == 2) {
+                    if (br_i-1 >= 0 && br_j+1 < colNum && data[br_i][br_j] == 0 && data[br_i-1][br_j] != 0 && data[br_i-1][br_j+1] == check) {cmove.col = br_j; make_move(cmove); return true;}
+                    if (tl_i+1 < rowNum && tl_j-1 >= 0 && data[tl_i][tl_j] == 0 && data[tl_i-1][tl_j] != 0 && data[tl_i+1][tl_j-1] == check) {cmove.col = tl_j; make_move(cmove); return true;}
+                }
+                //check horizontally
+                cnt = 0;
+                tj = j;
+                while(data[i][tj] == check && tj < colNum){tj++; cnt++; }
+                int ttj = tj;
+                tj = j-1;
+                while(data[i][tj] == check && tj >= 0) {tj--; cnt++;}
+                if (cnt == 3)
+                {
+                    if(ttj < colNum && data[i][ttj] == 0 && (i == 0 || i-1>=0 && data[i-1][ttj] != 0) ) { cmove.col = ttj; make_move(cmove); return true;}
+                    if(tj >= 0 && data[i][tj] == 0 && (i == 0 || i-1>=0 && data [i-1][tj] != 0)) { cmove.col = tj; make_move(cmove); return true;}
+                }
+                if(cnt == 2)
+                {
+                    if(ttj + 1 < colNum && data[i][ttj] == 0 && (i == 0 || i-1>=0 && data[i-1][ttj] != 0) && data[i][ttj+1] == check) { cmove.col = ttj; make_move(cmove); return true;}
+                    if(tj - 1 >= 0 && data[i][tj] == 0 && (i == 0 || i-1>=0 && data[i-1][ttj] != 0) && data[i][tj-1] == check) { cmove.col = tj; make_move(cmove); return true;}
+                }
+            }
+        }
+    }
+ }
+
+ game::Who Connect4::win_check(Who last_mover)
+{
+    //传入last_mover用于确认谁会赢得这场游戏
+
+    int last_move_col = history_moves[move_numbers-1].col;
+    //相当于most_recent_cloumn,获得上次下棋的列数
+    
+    int last_move_row = many_used[last_move_col] - 1;
+    //即many_many_used[most_recent_column]获得所在行数;
+    
+    int check = data[last_move_row][last_move_col];
+    //即我下棋的位置;
+    
+    int t, cnt = 0;
+    //check horizontally,水平检查;
+    t = last_move_col;
+    cnt = 0;
+    //用check 去代替用human,或者computer,节省代码;
+    while (t >= 0 && data[last_move_row][t] == check) {cnt++; t--; }
+    //检查从当前位置到最左边
+    t = last_move_col + 1;
+    while (t < colNum && data[last_move_row][t] == check) {cnt++; t++; }
+    //检查从当前位置到最左边
+    if (cnt >= 4) {is_game_over = true; return last_mover;}
+    //判断
+
+    //check vertically ,垂直检查
+    t = last_move_row;
+    cnt = 0;
+    while (t >= 0 && data[t][last_move_col] == check) {cnt++; t--; }
+    t = last_move_row + 1;
+    while (t < rowNum && data[t][last_move_col] == check) {cnt++; t++; }
+    if (cnt >= 4) {is_game_over = true; return last_mover;}
+    
+    //check diagnolly 1
+    //从左下到右上,y=x这条斜线;
+    int ti = last_move_row;
+    int tj = last_move_col;
+    cnt = 0;
+    while (ti >= 0 && tj >=0 && data[ti][tj] == check) {cnt++; ti--; tj--;}
+    ti = last_move_row + 1;
+    tj = last_move_col + 1;
+    while (ti < rowNum && tj < colNum && data[ti][tj] == check) {cnt++; ti++; tj++; }
+    if (cnt >= 4) {is_game_over = true; return last_mover;}
+
+    //check diagnolly 2
+    //从左上到右下,即 y=-x 这条斜线
+    ti = last_move_row;
+    tj = last_move_col;
+    cnt = 0;
+    while (ti >= 0 && tj < colNum && data[ti][tj] == check) { cnt++; ti--; tj++;}
+    ti = last_move_row + 1;
+    tj = last_move_col - 1;
+    while (ti < rowNum && tj >= 0 && data[ti][tj] == check) { cnt++; ti++; tj--; }
+    if (cnt >= 4) {is_game_over = true; return last_mover;}
+    return NEUTRAL;
+}
+
+ void computer_move_2()
+ {
+	 //rowNum = 6; colNum = 7;
+    for (int i = 0; i < rowNum; i++)
+    {
+        for (int j = 0; j < colNum; i++)
+        {
+            if (data[i][j]==check)
+            {
+                int ti = i, tj = j;
+
+                int cnt = 0;
+                
+
+				//check diagnally 1
+				//y=x 这个方向;
+
+                while (ti >= 0 && tj >= 0 && data[ti][tj] == check) {ti--;tj--;cnt++;}
+                int bl_i = ti, bl_j = tj; 
+                ti = i+1; tj = j+1;
+                while (ti < rowNum && tj < colNum && data[ti][tj] == check) {ti++; tj++; cnt++; }
+                int tr_i = ti, tr_j = tj;
+                
+                if (cnt == 2)
+                {	
+					//左下角
+                    if(bl_i-1 >= 0 && bl_j-1 >= 0//可以下,没越界 
+						&& data[bl_i][bl_j] == 0 
+						&& data[bl_i-1][bl_j] != 0//下面有棋 
+					)// 
+					{cmove.col = bl_j; make_move(cmove); return true;}
+					//右上角
+                    if(tr_i+1 < rowNum && tr_j+1 < colNum && data[tr_i][tr_j] == 0 && data[tr_i-1][tr_j] != 0 ) {cmove.col = tr_j; make_move(cmove); return true;}
+                }
+                //check diagnally 2
+				//y = -x 这条线
+                cnt = 0;
+                ti = i; tj = j;
+                while(data[ti][tj] == check && ti >= 0 && tj < colNum) {ti--;tj++;cnt++;}
+                int br_i = ti, br_j = tj; 
+
+                ti = i+1; tj = j-1;
+                while(data[ti][tj] == check && ti < rowNum && tj >= 0 ) {ti++; tj--; cnt++; }
+                int tl_i = ti, tl_j = tj;
+
+                if (cnt == 2) {
+                    if (br_i-1 >= 0 && br_j+1 < colNum && data[br_i][br_j] == 0 && data[br_i-1][br_j] != 0 ) {cmove.col = br_j; make_move(cmove); return true;}
+                    if (tl_i+1 < rowNum && tl_j-1 >= 0 && data[tl_i][tl_j] == 0 && data[tl_i-1][tl_j] != 0 ) {cmove.col = tl_j; make_move(cmove); return true;}
+                }
+                //check horizontally
+				//水平方向;
+                cnt = 0;
+                tj = j;
+				//从当前点到右
+                while(data[i][tj] == check && tj < colNum){tj++; cnt++; }
+                int ttj = tj;
+                tj = j-1;
+				//从当前点到左
+                while(data[i][tj] == check && tj >= 0) {tj--; cnt++;}
+				//没问题,ttj 和 tj 都是表示左右为空的第一列
+                if(cnt == 2)
+                {
+                    if(ttj + 1 < colNum && data[i][ttj] == 0 && (i == 0 || i-1>=0 && data[i-1][ttj] != 0) && data[i][ttj+1] == check) { cmove.col = ttj; make_move(cmove); return true;}
+                    if(tj - 1 >= 0 && data[i][tj] == 0 && (i == 0 || i-1>=0 && data[i-1][ttj] != 0) && data[i][tj-1] == check) { cmove.col = tj; make_move(cmove); return true;}
+                }
+                //check vertically
+                //上下方向
+				cnt = 0;
+                ti = i; tj= j;
+                while(ti >= 0 && data[ti][j]==check) {ti--; cnt++;}//往下遍历;
+                ti = i+1;
+                while(ti < rowNum && data[ti][j] == check) {ti++; cnt++;}
+                //这个方向上不需要出现2个棋子连成一块的情况,因为注定会被赌,它的优先级应该靠后，可以消耗对手的棋;
+				if(cnt == 2)
+				{
+					cmove.col = bj;//j --- 列
+					make_move(cmove);
+					return true;
+				}
+			
+			
+			
+			}
+
+        }
+    } 
+
+ }
+
+
+ bool Connect4::find_2_win(int check)
+{
+    C4_Move cmove;
+    for (int i = 0; i < rowNum; i++)
+    {
+        for (int j = 0; j < colNum; i++)
+        {
+            if (data[i][j]==check)
+            {
+                int ti = i, tj = j;
+
+                int cnt = 0;
+
+				//check diagnally 1
+				//y=x 这个方向;
+
+                while (ti >= 0 && tj >= 0 && data[ti][tj] == check) {ti--;tj--;cnt++;}
+                int bl_i = ti, bl_j = tj; 
+                ti = i+1; tj = j+1;
+				//左下
+                while (ti < rowNum && tj < colNum && data[ti][tj] == check) {ti++; tj++; cnt++; }
+                int tr_i = ti, tr_j = tj;
+                //右上
+
+                if (cnt == 2)
+                {	
+					//左下角
+                    if(bl_i-1 >= 0 && bl_j-1 >= 0//可以下,没越界 
+						&& data[bl_i][bl_j] == 0
+						&& tr_i <rowNum && tr_j < colNum 
+						&&data[tr_i][tr_j] == 0//y=x左右都有空
+						&&data[bl_i-1][br_j-1] == 0//并且左边有二个空
+						&& data[bl_i-1][bl_j] != 0//下面有棋 
+					)// 
+					{
+                     cmove.col = bl_j;
+                     make_move(cmove);
+                     return true;
+                    }
+					//右上角
+                    if(tr_i+1 < rowNum && tr_j+1 < colNum 
+						&& data[tr_i][tr_j] == 0
+						&& bl_i >= 0 && bl_j >=0
+						&& data[bl_i][bl_j] == 0
+						&& data[tr_i+1][tr_j+1] == 0 //并且右边有二个空
+						&& data[tr_i-1][tr_j] != 0 ) {cmove.col = tr_j; make_move(cmove); return true;}
+                }
+                //check diagnally 2
+				//y = -x 这条线
+                cnt = 0;
+                ti = i; tj = j;
+                while(data[ti][tj] == check && ti >= 0 && tj < colNum) {ti--;tj++;cnt++;}
+                int br_i = ti, br_j = tj; 
+				//右下
+                ti = i+1; tj = j-1;
+                while(data[ti][tj] == check && ti < rowNum && tj >= 0 ) {ti++; tj--; cnt++; }
+                int tl_i = ti, tl_j = tj;
+				//左上
+                if (cnt == 2) {
+                    if (br_i-1 >= 0 && br_j+1 < colNum 
+						&& data[br_i][br_j] == 0
+						&&data[tl_i][tl_j] == 0
+						&& tl_i < rowNum && tl_j >= 0
+						&&data[br_i-1][br_j+1] == 0//右下有二个空
+						&& data[br_i-1][br_j] != 0 ) 
+                    {cmove.col = br_j; make_move(cmove); return ;}
+                    if (tl_i+1 < rowNum && tl_j-1 >= 0
+						&& data[tl_i][tl_j] == 0
+						&& br_i >= 0 && br_j < rowNum
+						&& data[br_i][br_j] == 0
+						&& data[tl_i+1][tl_j-1] == 0//左上有二个空
+						&& data[tl_i-1][tl_j] != 0 ) 
+                    {cmove.col = tl_j; make_move(cmove); return ;}
+                }
+                //check horizontally
+				//水平方向;
+                cnt = 0;
+                tj = j;
+				//从当前点到右
+                while(data[i][tj] == check && tj < colNum){tj++; cnt++; }
+                int ttj = tj;
+                tj = j-1;
+				//从当前点到左
+                while(data[i][tj] == check && tj >= 0) {tj--; cnt++;}
+				//没问题,ttj 和 tj 都是表示左右为空的第一列
+				//tj---最左边的列数
+				//ttj --- 最右边的列数
+                if(cnt == 2)
+                {
+                    if(ttj + 1 < colNum && data[i][ttj] == 0 &&
+					(i == 0 || i-1>=0 && data[i-1][ttj] != 0)
+					&& tj>=0
+					&&data[i][tj] ==0
+					&& data[i][ttj+1] == 0//右边有二个空
+					) 
+					{
+					cmove.col = ttj;
+					make_move(cmove); 
+					return true;
+					}
+                    if(tj - 1 >= 0 && data[i][tj] == 0 
+						&& (i == 0 || i-1>=0 && data[i-1][ttj] != 0)
+						&& ttj < colNum
+						&&data[i][ttj] == 0 //左边有二个空
+						&& data[i][tj-1] == 0) 
+					{ 
+						cmove.col = tj;
+						make_move(cmove);
+						return true;
+					}
+                }
+                //check vertically
+                //上下方向
+				cnt = 0;
+                ti = i; tj= j;
+                while(ti >= 0 && data[ti][j]==check) {ti--; cnt++;}//往下遍历;
+                ti = i+1;
+                while(ti < rowNum && data[ti][j] == check) {ti++; cnt++;}
+                //这个方向上不需要出现2个棋子连成一块的情况,因为注定会被赌,它的优先级应该靠后，一般情况下只能消耗对手的棋;
+				if(cnt == 2)
+				{
+					cmove.col = bj;//j --- 列
+					make_move(cmove);
+					return true;
+				}
+			
+			//实验部分;
+}
+//二个棋的最好情况;
+
+//二个棋的消耗对手情况;
+bool Connect4::find_2_consume(int check)
+{
+    C4_Move cmove;
+    cout<<"find_2_consume"<<endl;
+    for (int i = 0; i < rowNum; i++)
+    {
+        for (int j = 0; j < colNum; j++)
+        {
+            if (data[i][j]==check)
+            {
+                int ti = i, tj = j;
+
+                int cnt = 0;
+
+				//check diagnally 1
+				//y=x 这个方向;
+
+                while (ti >= 0 && tj >= 0 && data[ti][tj] == check) {ti--;tj--;cnt++;}
+                int bl_i = ti, bl_j = tj; 
+                ti = i+1; tj = j+1;
+                while (ti < rowNum && tj < colNum && data[ti][tj] == check) {ti++; tj++; cnt++; }
+                int tr_i = ti, tr_j = tj;
+                
+                if (cnt == 2)
+                {	
+					//左下角
+                    if(bl_i >= 0 && bl_j >= 0//可以下,没越界 
+						&& data[bl_i][bl_j] == 0 //左右都有空,或者此时左右有一个越界;要改的话，加上更细的边界判断,tl_i<6 &&tl_j<7;
+						&& tr_i < rowNum && tr_j < colNum // 改了
+						&& data[tr_i][tr_j] == 0 
+						//下面有棋 
+					)
+					{
+						if(data[bl_i-1][bl_j] != 0)
+						{
+						cmove.col = bl_j;
+						make_move(cmove);
+						return true;
+						}
+						else if(data[tr_i-1][tr_j] != 0)
+							{cmove.col = tr_j; make_move(cmove); return true;}
+
+                    }
+					// 左右都有空的话,不都一样嘛,何必要你;
+					//不, 你还真的要它
+
+					//卡边界的情况,只能充当消耗;
+					//左下角
+                    if(bl_i-1 >= 0 && bl_j-1 >= 0//可以下,没越界 
+						&& data[bl_i][bl_j] == 0
+					//	&& tr_i <rowNum && tr_j < colNum 
+					//	&&data[tr_i][tr_j] == 0//y=x左右都有空
+						&&data[bl_i-1][bl_j-1] == 0//并且左边有二个空
+						&& data[bl_i-1][bl_j] != 0//下面有棋 
+					)// 
+					{
+                     cmove.col = bl_j;
+                     make_move(cmove);
+                     return true;
+                    }
+					//右上角卡边界
+                    if(tr_i+1 < rowNum && tr_j+1 < colNum 
+						&& data[tr_i][tr_j] == 0
+					//	&& bl_i >= 0 && bl_j >=0
+					//	&& data[bl_i][bl_j] == 0
+						&& data[tr_i+1][tr_j+1] == 0 //并且右边有二个空
+						&& data[tr_i-1][tr_j] != 0 ) 
+                        {cmove.col = tr_j; make_move(cmove); return true;}
+					//右上角
+					
+					
+					/*
+                    if(tr_i < rowNum && tr_j < colNum 
+						&& data[tr_i][tr_j] == 0
+						&& bl_i >= 0 && bl_j >= 0
+						&& data[bl_i][bl_j] == 0
+						&& data[tr_i-1][tr_j] != 0 ) 
+					{cmove.col = tr_j; make_move(cmove); return true;}
+                }
+				*/
+
+                //check diagnally 2
+				//y = -x 这条线
+                cnt = 0;
+                ti = i; tj = j;
+                while(data[ti][tj] == check && ti >= 0 && tj < colNum) {ti--;tj++;cnt++;}
+                int br_i = ti, br_j = tj; 
+
+                ti = i+1; tj = j-1;
+                while(data[ti][tj] == check && ti < rowNum && tj >= 0 ) {ti++; tj--; cnt++; }
+                int tl_i = ti, tl_j = tj;
+
+                if (cnt == 2) {
+                    if (br_i >= 0 && br_j < colNum 
+						&& data[br_i][br_j] == 0 //都有空
+						&& tl_i < rowNum && tl_j >= 0
+						&& data[tl_i][tl_j] == 0
+						) 
+					{	
+						if(data[br_i-1][br_j] != 0){
+						cmove.col = br_j; make_move(cmove); return true;}
+						else if(data[tl_i-1][tl_j] != 0)
+							 {cmove.col = tl_j; make_move(cmove); return true;}
+                    }
+						//卡边界
+					if (br_i-1 >= 0 && br_j+1 < colNum 
+						&& data[br_i][br_j] == 0
+					//	&&data[tl_i][tl_j] == 0
+					//	&& tl_i < rowNum && tl_j >= 0
+						&&data[br_i-1][br_j+1] == 0//右下有二个空
+						&& data[br_i-1][br_j] != 0 ) 
+                    {cmove.col = br_j; make_move(cmove); return true;}
+
+                    //卡左边界
+                    if (tl_i+1 < rowNum && tl_j-1 >= 0
+						&& data[tl_i][tl_j] == 0
+					//	&& br_i >= 0 && br_j < rowNum
+					//	&& data[br_i][br_j] == 0
+						&& data[tl_i+1][tl_j-1] == 0//左上有二个空
+						&& data[tl_i-1][tl_j] != 0 ) 
+                    {cmove.col = tl_j; make_move(cmove); return true;}
+				}
+					
+                //check horizontally
+				//水平方向;
+                cnt = 0;
+                tj = j;
+				//从当前点到右
+                while(data[i][tj] == check && tj < colNum){tj++; cnt++; }
+                int ttj = tj;
+                tj = j-1;
+				//从当前点到左
+                while(data[i][tj] == check && tj >= 0) {tj--; cnt++;}
+				//没问题,ttj 和 tj 都是表示左右为空的第一列
+                if(cnt == 2)
+                {
+                    if( ttj < colNum && data[i][ttj] == 0    
+						&& tj >= 0 && data[i][tj] == 0 
+                       // && (i == 0 || (i-1>=0 && data[i-1][ttj] != 0))
+                        ) 
+					{	
+						if(i == 0 || (i-1>=0 && data[i-1][ttj] != 0) )
+                        {
+						    cmove.col = ttj; make_move(cmove); return true;}
+						else if(i == 0 || (i-1>=0 && data[i-1][tj] != 0) )
+							{ cmove.col = tj; make_move(cmove); return true;}
+					
+                    }
+					//卡边界
+					 if(ttj + 1 < colNum && data[i][ttj] == 0 &&
+					(i == 0 || i-1>=0 && data[i-1][ttj] != 0)
+				//	&& tj>=0
+				//	&&data[i][tj] ==0
+					&& data[i][ttj+1] == 0//右边有二个空
+					) 
+					{
+					cmove.col = ttj;
+					make_move(cmove); 
+					return true;
+					}
+                    if(tj - 1 >= 0 && data[i][tj] == 0 
+						&& (i == 0 || i-1>=0 && data[i-1][ttj] != 0)
+					//	&& ttj < colNum
+					//	&&data[i][ttj] == 0 //左边有二个空
+						&& data[i][tj-1] == 0) 
+					{ 
+						cmove.col = tj;
+						make_move(cmove);
+						return true;
+					}
+				}
+            }
+        }
+    }
+    return false;
+}
+
+//接下来的情况都可以随意了,因为什么都消耗不了;
